@@ -1,0 +1,190 @@
+root@kmaster:~# history
+    1  clear
+    2  git clone https://github.com/lerndevosp/labs
+    3  git clone https://github.com/lerndevops/labs
+    4  labs/docker/install/installDocker.sh
+    5  clear
+    6  docker -v
+    7  clear
+    8  docker -v
+    9  echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   10  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   11  sudo apt-get update ; clear
+   12  sudo apt-get install -y kubelet kubeadm kubectl
+   13  clear
+   14  docker -v
+   15  kubeadm version
+   16  kubelet --version
+   17  kubectl version --short
+   18  clear
+   19  sudo kubeadm init --ignore-preflight-errors=all
+   20  clear
+   21  kubectl get nodes -o wide
+   22  kubectl get pods --all-namespaces -o wide
+   23  clear
+   24  kubectl get pods --all-namespaces -o wide
+   25  clear
+   26  kubectl get pods --all-namespaces -o wide
+   27  docker ps
+   28  kubectl get pods --all-namespaces -o wide
+   29  clear
+   30  kubectl run mypod --image=nginx
+   31  kubectl get pods
+   32  kubectl get pods -o wide
+   33  kubectl describe pod mypod
+   34  clear
+   35  kubectl get pods
+   36  kubectl delete pod mypod
+
+   37  history
+   38  clear
+   39  kubectl api-resources
+   40  clear
+   41  kubectl explain pod
+   42  clear
+   43  vi pod1.yml
+   44  kubectl apply -f pod1.yml
+   45  kubectl get podss
+   46  kubectl get podss
+   47  kubectl get pods
+   48  kubectl get pods -o wide
+   49  curl 10.36.0.1:80
+   50  clear
+   51  kubectl get pods
+   52  kubectl delete pod pod1
+   53  vi pod1.yml
+   54  kubectl apply -f pod1.yml
+   55  kubectl get pods
+   56  clear
+   57  kubectl explain ReplicaSet
+   58  clear
+   59  vi rs1.yml
+   60  kubectl apply -f rs1.yml
+   61  kubectl get replicaset
+   62  kubectl get replicaset -o wide
+   63  kubectl get pods -o wide
+   64  kubectl scale replicaset rs1 --replicas 10
+   65  kubectl get pods -o wide
+   66  kubectl scale replicaset rs1 --replicas 2
+   67  kubectl get pods -o wide
+   68  kubectl get rs
+   69  kubectl delete pod rs1-drp49
+   70  kubectl get rs
+   71  kubectl get pods -o wide
+   72  kubectl delete pod pod1
+   73  clear
+   74  history
+   75  kubectl delete rs rs1
+   76  clear
+   77  kubectl get rs
+   78  kubectl apply -f rs1.yml
+   79  kubectl get pods
+   80  kubectl get pods -o wide
+   81  curl 10.44.0.1:3000
+   82  curl 10.44.0.1:3000 ; echo ''
+   83  curl 10.44.0.2:3000 ; echo ''
+   84  clear
+   85  kubectl get pods
+   86  kubectl apply -f pod1.yml
+   87  kubectl get pods
+   88  kubectl get pods --show-labels
+   89  kubectl get pods -l type=db
+   90  kubectl get pods -l env=dev
+   91  vi service.yml
+   92  kubectl apply -f service.yml
+   93  clear
+   94  kubectl get service
+   95  kubectl describe service svc1
+   96  kubectl get pods -o wide
+   97  curl 10.36.0.2:3000 ; echo ''
+   98  curl 10.97.34.13:80 ; echo ''
+   99  curl 10.36.0.2:3000 ; echo ''
+  100  curl 10.97.34.13:80 ; echo ''
+  101  clear
+  102  ls -l
+  103  cp service.yml np-service.yml
+  104  vi np-service.yml
+  105  kubectl apply -f np-service.yml
+  106  kubectl get svc
+  107  netstat -nap | grep 30530
+
+
+
+root@knode1:~# history
+    1  clear
+    2  git clone https://github.com/lerndevops/labs
+    3  labs/docker/install/installDocker.sh
+    4  clear
+    5  docker -v
+    6  echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    7  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    8  sudo apt-get update ; clear
+    9  sudo apt-get install -y kubelet kubeadm
+   10  clear
+   11  kubeadm join 10.154.0.32:6443 --token 1sa2r4.8ygeh7cxphgjdgbs     --discovery-token-ca-cert-hash sha256:71e938248245c4c412b22bc2e24ce5335700832f0bbdec540f69dcf67a44899f
+
+
+
+root@kmaster:~# cat pod1.yml
+kind: Pod    ## kubectl api-resources
+apiVersion: v1 ## kubectl explain pod
+metadata:
+  name: pod1
+  labels:
+    type: db
+spec:
+  containers:
+    - name: cont1
+      image: nginx
+      ports:
+        - containerPort: 80
+    - name: cont2
+      image: tomcat
+      ports:
+        - containerPort: 8080
+root@kmaster:~# cat rs1.yml
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: rs1
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      env: dev
+  template:
+    metadata:
+      labels:
+        env: dev
+    spec:
+      containers:
+        - name: cont1
+          image: lerndevops/samplepyapp:v1
+          ports:
+            - containerPort: 3000
+root@kmaster:~# cat service.yml
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc1
+spec:
+  type: ClusterIP   ## internal load balancer to access your application
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    env: dev
+root@kmaster:~# cat np-service.yml
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc2
+spec:
+  type: NodePort  ## exposes a port on everynode in cluster & also create internal loadbalancer cluster ip
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    env: dev
+
+
